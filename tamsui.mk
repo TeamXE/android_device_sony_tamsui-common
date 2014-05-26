@@ -219,6 +219,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     hw.fm.isAnalog=true
+    
+# Set default USB interface
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.usb.config=mtp,adb 
 
 # $(call inherit-product, vendor/sony/qcom-common/qcom-common-vendor.mk)
 
