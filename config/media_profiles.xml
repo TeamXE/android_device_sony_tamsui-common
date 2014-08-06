@@ -27,7 +27,6 @@
   <!ATTLIST EncoderProfile quality (timelapsehigh|timelapselow|timelapse480p|timelapseqcif|high|low|480p|vga|qcif) #REQUIRED>
   <!ATTLIST EncoderProfile fileFormat (mp4|3gp) #REQUIRED>
   <!ATTLIST EncoderProfile duration (30|60) #REQUIRED>
-  <!ATTLIST EncoderProfile cameraId (0|1) #REQUIRED>
   <!ELEMENT Video EMPTY>
   <!ATTLIST Video codec (h264|h263|m4v) #REQUIRED>
   <!ATTLIST Video bitRate CDATA #REQUIRED>
@@ -73,14 +72,8 @@
   <!ELEMENT AudioDecoderCap EMPTY>
   <!ATTLIST AudioDecoderCap name (wma) #REQUIRED>
   <!ATTLIST AudioDecoderCap enabled (true|false) #REQUIRED>
-  <!ELEMENT VideoEditorCap EMPTY>
-  <!ATTLIST VideoEditorCap maxInputFrameWidth CDATA #REQUIRED>
-  <!ATTLIST VideoEditorCap maxInputFrameHeight CDATA #REQUIRED>
-  <!ATTLIST VideoEditorCap maxOutputFrameWidth CDATA #REQUIRED>
-  <!ATTLIST VideoEditorCap maxOutputFrameHeight CDATA #REQUIRED>
-  <!ATTLIST VideoEditorCap maxPrefetchYUVFrames CDATA #REQUIRED>
   <!ELEMENT ExportVideoProfile EMPTY>
-  <!ATTLIST ExportVideoProfile name (h263|h264|m4v) #REQUIRED>
+  <!ATTLIST ExportVideoProfile name (h264|h263|m4v) #REQUIRED>
   <!ATTLIST ExportVideoProfile profile CDATA #REQUIRED>
   <!ATTLIST ExportVideoProfile level CDATA #REQUIRED>
 ]>
@@ -91,17 +84,17 @@
 <MediaSettings>
   <!-- Each camcorder profile defines a set of predefined configuration parameters -->
   <!-- Back Camera -->
-  <CamcorderProfiles cameraId="0">
+  <CamcorderProfiles>
     <EncoderProfile quality="high" fileFormat="mp4" duration="60">
       <Video codec = "h264"
-             bitRate="720000"
-             width="640"
-             height="480"
-             frameRate = "20"/>
-      <Audio codec="amrnb"
-             bitRate="12200"
-             sampleRate="8000"
-             channels ="1" />
+             bitRate="1500000"
+             width="320"
+             height="240"
+             frameRate = "15"/>
+      <Audio codec="aac"
+             bitRate="128000"
+             sampleRate="44100"
+             channels ="2" />
     </EncoderProfile>
 
     <EncoderProfile quality="low" fileFormat="mp4" duration="20">
@@ -200,10 +193,13 @@
              channels="2" />
     </EncoderProfile>
 
+    <ImageEncoding quality="100" />
     <ImageEncoding quality="90" />
     <ImageEncoding quality="80" />
-    <ImageEncoding quality="70" />
     <ImageDecoding memCap="20000000" />
+    
+    <Camera previewFrameRate="15" />
+    
   </CamcorderProfiles>
 
   <CamcorderProfiles cameraId="1">
@@ -332,10 +328,10 @@
          or query the capabilities of the codec at all if it is disabled
     -->
   <VideoEncoderCap name="h264" enabled="true"
-      minBitRate="64000" maxBitRate="20000000"
-      minFrameWidth="176" maxFrameWidth="1920"
-      minFrameHeight="144" maxFrameHeight="1088"
-      minFrameRate="1" maxFrameRate="30" />
+      minBitRate="64000" maxBitRate="1500000"
+      minFrameWidth="176" maxFrameWidth="640"
+      minFrameHeight="144" maxFrameHeight="480"
+      minFrameRate="1" maxFrameRate="15" />
 
   <VideoEncoderCap name="h263" enabled="true"
       minBitRate="64000" maxBitRate="2000000"
@@ -344,15 +340,13 @@
       minFrameRate="1" maxFrameRate="30" />
 
   <VideoEncoderCap name="m4v" enabled="true"
-      minBitRate="64000" maxBitRate="20000000"
-      minFrameWidth="176" maxFrameWidth="1920"
-      minFrameHeight="144" maxFrameHeight="1088"
-      minFrameRate="1" maxFrameRate="30" />
+      
 
   <AudioEncoderCap name="aac" enabled="true"
-      minBitRate="8000" maxBitRate="156000"
-      minSampleRate="8000" maxSampleRate="48000"
-      minChannels="1" maxChannels="2" />
+      minBitRate="64000" maxBitRate="1500000"
+      minFrameWidth="176" maxFrameWidth="640"
+      minFrameHeight="144" maxFrameHeight="480"
+      minFrameRate="1" maxFrameRate="24" />
 
   <AudioEncoderCap name="amrwb" enabled="true"
         minBitRate="6600" maxBitRate="23050"
