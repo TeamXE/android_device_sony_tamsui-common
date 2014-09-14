@@ -27,11 +27,6 @@ PRODUCT_COPY_FILES += \
 	device/sony/tamsui-common/config/init.sony.rc:root/init.sony.rc \
 	device/sony/tamsui-common/config/init.recovery.sony.rc:root/init.recovery.sony.rc \
 	device/sony/tamsui-common/config/ueventd.sony.rc:root/ueventd.sony.rc
-	
-# reboot to recovery
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/config/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    $(COMMON_PATH)/config/pre-recovery.sh:root/sbin/pre-recovery.sh
 
 # Adreno 200 GPU prebuilt blobs   
 PRODUCT_COPY_FILES += \
