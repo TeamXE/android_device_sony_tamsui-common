@@ -36,7 +36,7 @@
         <MediaCodec name="OMX.google.amrwb.encoder" type="audio/amr-wb" />
 	<MediaCodec name="OMX.google.flac.encoder" type="audio/flac" />
         <!-- Video Hardware  -->
-        <MediaCodec name="OMX.qcom.video.encoder.avc" type="video/avc" >
+        <!-- <MediaCodec name="OMX.qcom.video.encoder.avc" type="video/avc" >
             <Quirk name="requires-allocate-on-input-ports" />
             <Quirk name="requires-allocate-on-output-ports" />
             <Quirk name="requires-loaded-to-idle-after-allocation" />
@@ -50,7 +50,7 @@
             <Quirk name="requires-allocate-on-input-ports" />
             <Quirk name="requires-allocate-on-output-ports" />
             <Quirk name="requires-loaded-to-idle-after-allocation" />
-        </MediaCodec>
+        </MediaCodec> -->
         <!-- Video Software  -->
         <MediaCodec name="OMX.google.h264.encoder" type="video/avc" />
         <MediaCodec name="OMX.google.mpeg4.encoder" type="video/mp4v-es" />
