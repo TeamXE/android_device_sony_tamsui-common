@@ -1,0 +1,54 @@
+From f69d6959ddd6d1c2395529f8da00027c7a892117 Mon Sep 17 00:00:00 2001
+From: Andrei Emeltchenko <andrei.emeltchenko@intel.com>
+Date: Mon, 14 Oct 2013 16:48:26 +0300
+Subject: [PATCH] Add SOCK_CLOEXEC and SOCK_NONBLOCK socket flags.
+
+SOCK_CLOEXEC is used to atomically set close-on-exec flag for the new
+descriptor(s), and SOCK_NONBLOCK is used to mark descriptor(s) as
+non-blocking.
+
+Change-Id: I8ba6a70543d23759e3ddcc7ff9c21b567184d681
+---
+ libc/include/sys/socket.h | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/libc/include/sys/socket.h b/libc/include/sys/socket.h
+index 17ba0a1..2502269 100644
+--- a/libc/include/sys/socket.h
++++ b/libc/include/sys/socket.h
+@@ -25,6 +25,7 @@
+  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  * SUCH DAMAGE.
+  */
++
+ #ifndef _SYS_SOCKET_H_
+ #define _SYS_SOCKET_H_
+ 
+@@ -32,6 +33,7 @@
+ #include <sys/types.h>
+ #include <linux/socket.h>
+ 
++#include <asm/fcntl.h>
+ #include <asm/socket.h>
+ #include <linux/sockios.h>
+ #include <linux/uio.h>
+@@ -61,13 +63,15 @@ typedef int socklen_t;
+ #define SOCK_PACKET      10
+ #endif
+ 
+-/* BIONIC: second argument to shutdown() */
++#define SOCK_CLOEXEC O_CLOEXEC
++#define SOCK_NONBLOCK O_NONBLOCK
++
+ enum {
+-    SHUT_RD = 0,        /* no more receptions */
++  SHUT_RD = 0,
+ #define SHUT_RD         SHUT_RD
+-    SHUT_WR,            /* no more transmissions */
++  SHUT_WR,
+ #define SHUT_WR         SHUT_WR
+-    SHUT_RDWR           /* no more receptions or transmissions */
++  SHUT_RDWR
+ #define SHUT_RDWR       SHUT_RDWR
+ };
+ 

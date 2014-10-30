@@ -1,0 +1,38 @@
+From 82405fe7c4da5728612854d3b2f8d43ddbce3d2c Mon Sep 17 00:00:00 2001
+From: Matt Koenig <der_koenig@rocketmail.com>
+Date: Mon, 10 Mar 2014 16:59:40 +0100
+Subject: [PATCH] Add 2G/3G indicator text on network selection dialog
+
+Change-Id: Ife522b6d44965836846421ef87d1c8b2775a0f53
+---
+ src/com/android/phone/NetworkSetting.java | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/src/com/android/phone/NetworkSetting.java b/src/com/android/phone/NetworkSetting.java
+index 9b6c5dd..23237cb 100644
+--- a/src/com/android/phone/NetworkSetting.java
++++ b/src/com/android/phone/NetworkSetting.java
+@@ -417,14 +417,20 @@ private void networksListLoaded(List<OperatorInfo> result, int status) {
+             if (result != null){
+                 displayEmptyNetworkList(false);
+ 
++                String rat;
++                String summaryText = "";
++
+                 // create a preference for each item in the list.
+                 // just use the operator name instead of the mildly
+                 // confusing mcc/mnc.
+                 for (OperatorInfo ni : result) {
+                     Preference carrier = new Preference(this, null);
+-                    carrier.setTitle(getNetworkTitle(ni)
+-                            + " (" + ni.getOperatorRat() + ", "
+-                            + ni.getState().toString().toLowerCase() + ")");
++                    carrier.setTitle(getNetworkTitle(ni));
++                    rat = ni.getOperatorRat();
++                    if(rat.equals("WCDMA")) summaryText = "3G, ";
++                    if(rat.equals("GSM")) summaryText = "2G, ";
++                    summaryText += ni.getState().toString().toLowerCase();
++                    carrier.setSummary(summaryText);
+                     carrier.setPersistent(false);
+                     mNetworkList.addPreference(carrier);
+                     mNetworkMap.put(carrier, ni);

@@ -1,0 +1,28 @@
+From bc0a351c91cc81273ae19e7a840544d2d9ef0463 Mon Sep 17 00:00:00 2001
+From: Matt Koenig <der_koenig@rocketmail.com>
+Date: Mon, 10 Mar 2014 16:59:30 +0100
+Subject: [PATCH] Add RAT display on operator selection dialog
+
+Change-Id: Ie6986cbec195c2e9245e0a64926e243d8fc517e4
+
+Conflicts:
+	src/com/android/phone/NetworkSetting.java
+---
+ src/com/android/phone/NetworkSetting.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/com/android/phone/NetworkSetting.java b/src/com/android/phone/NetworkSetting.java
+index 5917795..9b6c5dd 100644
+--- a/src/com/android/phone/NetworkSetting.java
++++ b/src/com/android/phone/NetworkSetting.java
+@@ -422,7 +422,9 @@ private void networksListLoaded(List<OperatorInfo> result, int status) {
+                 // confusing mcc/mnc.
+                 for (OperatorInfo ni : result) {
+                     Preference carrier = new Preference(this, null);
+-                    carrier.setTitle(getNetworkTitle(ni));
++                    carrier.setTitle(getNetworkTitle(ni)
++                            + " (" + ni.getOperatorRat() + ", "
++                            + ni.getState().toString().toLowerCase() + ")");
+                     carrier.setPersistent(false);
+                     mNetworkList.addPreference(carrier);
+                     mNetworkMap.put(carrier, ni);

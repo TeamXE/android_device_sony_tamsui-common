@@ -1,0 +1,154 @@
+From 14bf671391e4005d3b976cce6b5c3deee1d16955 Mon Sep 17 00:00:00 2001
+From: Matt Koenig <der_koenig@rocketmail.com>
+Date: Fri, 7 Mar 2014 21:02:27 +0100
+Subject: [PATCH] Enable Sony operator handling
+
+Change-Id: Ief98bcf03906e7f1a807e5eecf44a109d487f460
+---
+ .../android/internal/telephony/OperatorInfo.java   | 35 +++++++++++++++++++---
+ .../android/internal/telephony/gsm/GSMPhone.java   | 14 +++++++--
+ 2 files changed, 43 insertions(+), 6 deletions(-)
+
+diff --git a/src/java/com/android/internal/telephony/OperatorInfo.java b/src/java/com/android/internal/telephony/OperatorInfo.java
+index 49c96a9..d7d5143 100644
+--- a/src/java/com/android/internal/telephony/OperatorInfo.java
++++ b/src/java/com/android/internal/telephony/OperatorInfo.java
+@@ -33,6 +33,7 @@
+     private String mOperatorAlphaLong;
+     private String mOperatorAlphaShort;
+     private String mOperatorNumeric;
++    private String mOperatorRat;
+ 
+     private State mState = State.UNKNOWN;
+ 
+@@ -52,6 +53,11 @@
+         return mOperatorNumeric;
+     }
+ 
++    public String
++    getOperatorRat() {
++        return mOperatorRat;
++    }
++
+     public State
+     getState() {
+         return mState;
+@@ -61,11 +67,20 @@
+                 String operatorAlphaShort,
+                 String operatorNumeric,
+                 State state) {
++        this (operatorAlphaLong, operatorAlphaShort,
++                operatorNumeric, state, "");
++    }
++
++    OperatorInfo(String operatorAlphaLong,
++                String operatorAlphaShort,
++                String operatorNumeric,
++                State state,
++                String operatorRat) {
+ 
+         mOperatorAlphaLong = operatorAlphaLong;
+         mOperatorAlphaShort = operatorAlphaShort;
+         mOperatorNumeric = operatorNumeric;
+-
++        mOperatorRat = operatorRat;
+         mState = state;
+     }
+ 
+@@ -75,7 +90,17 @@ public OperatorInfo(String operatorAlphaLong,
+                 String operatorNumeric,
+                 String stateString) {
+         this (operatorAlphaLong, operatorAlphaShort,
+-                operatorNumeric, rilStateToState(stateString));
++                operatorNumeric, stateString, "");
++    }
++
++    public OperatorInfo(String operatorAlphaLong,
++                String operatorAlphaShort,
++                String operatorNumeric,
++                String stateString,
++                String operatorRat) {
++        this (operatorAlphaLong, operatorAlphaShort,
++                operatorNumeric, rilStateToState(stateString),
++                operatorRat);
+     }
+ 
+     /**
+@@ -96,12 +121,12 @@ private static State rilStateToState(String s) {
+         }
+     }
+ 
+-
+     @Override
+     public String toString() {
+         return "OperatorInfo " + mOperatorAlphaLong
+                 + "/" + mOperatorAlphaShort
+                 + "/" + mOperatorNumeric
++                + "/" + mOperatorRat
+                 + "/" + mState;
+     }
+ 
+@@ -128,6 +153,7 @@ public void writeToParcel(Parcel dest, int flags) {
+         dest.writeString(mOperatorAlphaShort);
+         dest.writeString(mOperatorNumeric);
+         dest.writeSerializable(mState);
++        dest.writeString(mOperatorRat);
+     }
+ 
+     /**
+@@ -142,7 +168,8 @@ public OperatorInfo createFromParcel(Parcel in) {
+                         in.readString(), /*operatorAlphaLong*/
+                         in.readString(), /*operatorAlphaShort*/
+                         in.readString(), /*operatorNumeric*/
+-                        (State) in.readSerializable()); /*state*/
++                        (State) in.readSerializable(), /*state*/
++                        in.readString()); /*operatorRat*/
+                 return opInfo;
+             }
+ 
+diff --git a/src/java/com/android/internal/telephony/gsm/GSMPhone.java b/src/java/com/android/internal/telephony/gsm/GSMPhone.java
+index f200699..60c5d8e 100644
+--- a/src/java/com/android/internal/telephony/gsm/GSMPhone.java
++++ b/src/java/com/android/internal/telephony/gsm/GSMPhone.java
+@@ -120,6 +120,7 @@
+ 
+     private String mImei;
+     private String mImeiSv;
++    private String mManualNetworkSelectionRat = "";
+     private String mVmNumber;
+ 
+     // Create Cfu (Call forward unconditional) so that dialling number &
+@@ -1067,6 +1068,7 @@ public void setCallWaiting(boolean enable, Message onComplete) {
+ 
+         // get the message
+         Message msg = obtainMessage(EVENT_SET_NETWORK_AUTOMATIC_COMPLETE, nsm);
++        mManualNetworkSelectionRat = "";
+         if (LOCAL_DEBUG)
+             Rlog.d(LOG_TAG, "wrapping and sending message to connect automatically");
+ 
+@@ -1087,7 +1089,15 @@ public void setCallWaiting(boolean enable, Message onComplete) {
+         // get the message
+         Message msg = obtainMessage(EVENT_SET_NETWORK_MANUAL_COMPLETE, nsm);
+ 
+-        mCi.setNetworkSelectionModeManual(network.getOperatorNumeric(), msg);
++        mManualNetworkSelectionRat = "";
++        if(network.getOperatorRat().equals("WCDMA")) {
++            mManualNetworkSelectionRat = "RAT3";
++        } else if(network.getOperatorRat().equals("GSM")) {
++            mManualNetworkSelectionRat = "RAT2";
++        }
++
++        mCi.setNetworkSelectionModeManual(mManualNetworkSelectionRat + 
++                network.getOperatorNumeric(), msg);
+     }
+ 
+     @Override
+@@ -1490,7 +1500,7 @@ private void handleSetSelectNetwork(AsyncResult ar) {
+         // nsm.operatorNumeric is "" if we're in automatic.selection.
+         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+         SharedPreferences.Editor editor = sp.edit();
+-        editor.putString(NETWORK_SELECTION_KEY, nsm.operatorNumeric);
++        editor.putString(NETWORK_SELECTION_KEY, mManualNetworkSelectionRat + nsm.operatorNumeric);
+         editor.putString(NETWORK_SELECTION_NAME_KEY, nsm.operatorAlphaLong);
+ 
+         // commit and log the result.
