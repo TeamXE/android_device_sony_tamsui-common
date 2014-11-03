@@ -1,4 +1,5 @@
-USE_CAMERA_STUB := true
+USE_CAMERA_STUB := false
+USE_DEVICE_SPECIFIC_CAMERA := true
 
 TARGET_SPECIFIC_HEADER_PATH := device/sony/tamsui-common/include
 
