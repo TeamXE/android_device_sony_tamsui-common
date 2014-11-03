@@ -1,5 +1,10 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
+PRODUCT_BOOT_JARS += qcmediaplayer
+
+# qcmediaplayer
+PRODUCT_PACKAGES += qcmediaplayer
+
 DEVICE_PACKAGE_OVERLAYS += device/sony/tamsui-common/overlay
 
 # Permissions
